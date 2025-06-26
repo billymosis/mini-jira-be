@@ -26,3 +26,6 @@ curl \
   http://localhost:8000/api/v1/hello-json
 {"status":"request was permitted"}%
 ```
+
+mkdir -p apps/projects
+python manage.py startapp projects apps/projects
