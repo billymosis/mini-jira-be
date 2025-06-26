@@ -29,3 +29,6 @@ curl \
 
 mkdir -p apps/projects
 python manage.py startapp projects apps/projects
+
+Seed groups, permissions and users
+python manage.py makemigrations users --empty
