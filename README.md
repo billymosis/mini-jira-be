@@ -7,7 +7,9 @@ uv pip install django djangorestframework djangorestframework-simplejwt
 django-admin startproject config .
 cd apps
 uv run django-admin startapps tasks
-python manage.py createsuperuser (admin, admin)
+mkdir apps/tasks -p
+python manage.py startapp tasks apps/tasks
+python manage.py startapp users apps/users
 
 ```bash
 curl \
@@ -20,7 +22,7 @@ curl \
 
 ```bash
 curl \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwODUxNzM5LCJpYXQiOjE3NTA4NTE0MzksImp0aSI6ImJiNDM2ZTg5MTlmZTQxN2JhOWQ4YzZhOWQ3YjI1MGUxIiwidXNlcl9pZCI6MX0.yWXD-GzTKXP9zJ6opYogL0hlPKhj7dIkPBqdsbIrSkI" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwOTIwMTU3LCJpYXQiOjE3NTA5MTk4NTcsImp0aSI6IjNiYjE2MzM0NTIwODQzNzg5ZWM5MTRmZjhiNzQ2ZTJlIiwidXNlcl9pZCI6ImM2OTM5ZDUxLWYzMGQtNDk4My05Y2FmLWFhZjk4MTFiOWUzMCJ9.tie8rvYwooVJXDkqT4cN9qkY_pndlgNIbYrTsBi2790" \
   http://localhost:8000/api/v1/hello-json
 {"status":"request was permitted"}%
 ```
