@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class TaskList(APIView):
+    serializer_class = TaskSerializer
+
     def post(self, request):
         serializer = TaskSerializer(data=request.data)
         project: Project = get_object_or_404(Project, pk=request.data.get("project"))
@@ -32,6 +34,8 @@ class TaskList(APIView):
 
 
 class TaskDetail(APIView):
+    serializer_class = TaskSerializer
+
     def get_object(self, pk):
         try:
             return Task.objects.get(pk=pk)

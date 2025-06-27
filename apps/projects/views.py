@@ -23,6 +23,7 @@ class ProjectList(APIView):
     List all projects.
     """
 
+    serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
     pagination_class = PageNumberPagination
 
@@ -84,6 +85,7 @@ class ProjectDetail(APIView):
     Retrieve, update or delete a project instance.
     """
 
+    serializer_class = ProjectTasksSerializer
     permission_classes = [IsAuthenticated, IsProjectOwnerOrReadOnly]
 
     def get_object(self, pk):
