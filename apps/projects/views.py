@@ -2,7 +2,11 @@ from rest_framework.views import APIView, Http404, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Project
-from .serializers import ProjectSerializer
+from .serializers import (
+    ProjectRequestSerializer,
+    ProjectSerializer,
+    ProjectTasksSerializer,
+)
 from .permissions import IsAdminOrReadOnly, IsProjectOwnerOrReadOnly
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
@@ -37,6 +41,25 @@ class ProjectList(APIView):
         if member_id:
             projects = projects.filter(members__id=member_id)
 
+        # Filter by task status
+        statuses = request.query_params.getlist("status", None)
+        if statuses:
+            projects = projects.filter(tasks__status__in=statuses).distinct()
+
+        # Filter by task name
+        task_name = request.query_params.getlist("task", None)
+        if task_name:
+            projects = projects.filter(tasks__name__icontains=task_name).distinct()
+
+        # Filter by task assignee (supports multiple assignees)
+        task_assignee_ids = request.query_params.getlist(
+            "assignee"
+        )  # Use getlist() for multiple values
+        if task_assignee_ids:
+            projects = projects.filter(
+                tasks__assigned_to__id__in=task_assignee_ids
+            ).distinct()
+
         # Ordering
         ordering = request.query_params.get("ordering", "-created_at")
         if ordering:
@@ -50,7 +73,8 @@ class ProjectList(APIView):
     def post(self, request):
         serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(owner=request.user)
+            project: Project = serializer.save(owner=request.user)
+            project.members.add(request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -74,15 +98,15 @@ class ProjectDetail(APIView):
 
     def get(self, request, pk):
         project = self.get_object(pk)
-        serializer = ProjectSerializer(project)
+        serializer = ProjectTasksSerializer(project)
         return Response(serializer.data)
 
     def put(self, request, pk):
         project = self.get_object(pk)
-        serializer = ProjectSerializer(project, data=request.data)
+        serializer = ProjectRequestSerializer(project, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(ProjectSerializer(project).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
