@@ -13,11 +13,11 @@ class CustomUser(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.groups.filter(name="Admin").exists()
+        return self.groups.filter(name="Admins").exists()
 
     @property
     def is_member(self):
-        return self.groups.filter(name="Member").exists()
+        return self.groups.filter(name="Members").exists()
 
     @property
     def full_name(self):
