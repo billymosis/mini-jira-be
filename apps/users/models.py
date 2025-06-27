@@ -19,6 +19,10 @@ class CustomUser(AbstractUser):
     def is_member(self):
         return self.groups.filter(name="Member").exists()
 
+    @property
+    def full_name(self):
+        return self.get_full_name()
+
     class Meta(AbstractUser.Meta):
         verbose_name = "User"
         verbose_name_plural = "Users"

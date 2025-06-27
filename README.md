@@ -15,7 +15,7 @@ python manage.py startapp users apps/users
 curl \
   -X POST \
   -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin"}' \
+  -d '{"username": "admin", "password": "admin123"}' \
   http://localhost:8000/api/token/
 {"refresh":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MDkzNzgzOSwiaWF0IjoxNzUwODUxNDM5LCJqdGkiOiJjZDBiNjVkMjMyZDg0OTEzOWM4MWFkZDc3M2Y4ODc0NiIsInVzZXJfaWQiOjF9.0j13hc3z1N2_WaGtAzTiXPgy3fI1eP_WbXsDuNNri4o","access":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUwODUxNzM5LCJpYXQiOjE3NTA4NTE0MzksImp0aSI6ImJiNDM2ZTg5MTlmZTQxN2JhOWQ4YzZhOWQ3YjI1MGUxIiwidXNlcl9pZCI6MX0.yWXD-GzTKXP9zJ6opYogL0hlPKhj7dIkPBqdsbIrSkI"}%
 ```
@@ -32,3 +32,9 @@ python manage.py startapp projects apps/projects
 
 Seed groups, permissions and users
 python manage.py makemigrations users --empty
+
+admin token:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNTg1NjMyLCJpYXQiOjE3NTA5ODA4MzIsImp0aSI6IjFmOGI1OTZiOGI5ZTRiZDZiZWMyYTQ5YTk1NTEzZjg4IiwidXNlcl9pZCI6IjE4ODc3MDIwLTk0YWUtNGVkYy04Y2E4LWY5NmMyMDNiZTQ1ZiJ9.gxDRFHliFhH8MB8B4tMkbC5yQJEbcj8fZIH-aFGvZIw
+
+member1 token:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzUxNTg1NjU3LCJpYXQiOjE3NTA5ODA4NTcsImp0aSI6ImI0NzFhZjY2ZjQzOTQ0Y2JhNzc4YjRmNzY5NjVlOTlmIiwidXNlcl9pZCI6ImQxOTJlYTBhLTZhMDgtNGRmYS05ZGU2LTY2ZWI5Y2VkMThmYSJ9.h35fLjEsGyhx6RliLzaJejQAKc56H5ogS0R2EG40amk
