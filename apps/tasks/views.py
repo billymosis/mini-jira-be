@@ -1,13 +1,11 @@
-from django.http import HttpResponse
+from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView, Http404, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-import datetime
 from django.shortcuts import get_object_or_404
 
 from apps.projects.models import Project
 from apps.tasks.models import Task
-from apps.tasks.serializers import TaskSerializer
+from apps.tasks.serializers import TaskRequestSerializer, TaskSerializer
 
 import logging
 
@@ -17,8 +15,12 @@ logger = logging.getLogger(__name__)
 class TaskList(APIView):
     serializer_class = TaskSerializer
 
+    @extend_schema(
+        request=TaskRequestSerializer,
+        responses=TaskSerializer,
+    )
     def post(self, request):
-        serializer = TaskSerializer(data=request.data)
+        serializer = TaskRequestSerializer(data=request.data)
         project: Project = get_object_or_404(Project, pk=request.data.get("project"))
 
         if not project.members.filter(id=request.user.id).exists():
@@ -28,8 +30,9 @@ class TaskList(APIView):
             )
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            task = serializer.save()
+            response_serializer = TaskSerializer(task)
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -51,12 +54,17 @@ class TaskDetail(APIView):
         serializer = TaskSerializer(task)
         return Response(serializer.data)
 
+    @extend_schema(
+        request=TaskRequestSerializer,
+        responses=TaskSerializer,
+    )
     def put(self, request, pk):
         task = self.get_object(pk)
-        serializer = TaskSerializer(task, data=request.data)
+        serializer = TaskRequestSerializer(task, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            response_serializer = TaskSerializer(instance=task)
+            return Response(response_serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):

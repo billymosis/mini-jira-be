@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from apps.tasks.models import Task
 from apps.tasks.serializers import TaskSerializer
 from apps.users.models import CustomUser
 from apps.users.serializers import UserShortSerializer
@@ -28,6 +27,7 @@ class ProjectRequestSerializer(serializers.ModelSerializer):
 
 class ProjectTasksSerializer(serializers.ModelSerializer):
     tasks = TaskSerializer(many=True, read_only=True)
+    members = UserShortSerializer(many=True, read_only=True)
 
     class Meta:
         model = Project

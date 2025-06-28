@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate
 class UserShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ["id", "full_name"]
+        fields = ["id", "full_name", "avatar"]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -25,6 +25,12 @@ class UserSerializer(serializers.ModelSerializer):
             "full_name",
         ]
         read_only_fields = ["id", "last_seen", "is_admin", "is_member", "full_name"]
+
+
+class LoginResponseSerializer(serializers.Serializer):
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+    user = UserSerializer(read_only=True)
 
 
 class RegisterSerializer(serializers.ModelSerializer):
