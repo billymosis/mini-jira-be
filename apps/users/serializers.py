@@ -1,5 +1,7 @@
 from django.contrib.auth.models import Group
+from drf_spectacular.utils import OpenApiExample, extend_schema_serializer
 from rest_framework import serializers
+from rest_framework.fields import ValidationError
 from .models import CustomUser
 from django.contrib.auth import authenticate
 
@@ -75,3 +77,26 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect credentials")
+
+
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            "Avatar upload example",
+            description="Upload an avatar image",
+            value={"avatar": "<binary file data>"},
+            request_only=True,
+            media_type="multipart/form-data",
+        )
+    ]
+)
+class AvatarUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ("avatar",)
+
+    def validate_avatar(self, value):
+        valid_extensions = [".jpg", ".jpeg", ".png", ".gif"]
+        if not any(value.name.lower().endswith(ext) for ext in valid_extensions):
+            raise ValidationError("Unsupported file extension.")
+        return value

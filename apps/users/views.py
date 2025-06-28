@@ -1,6 +1,6 @@
 from django.db.models import Q
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, UpdateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import CustomUser
 from .serializers import (
+    AvatarUploadSerializer,
     LoginResponseSerializer,
     UserSerializer,
     RegisterSerializer,
@@ -121,3 +122,32 @@ class Me(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+
+class AvatarUploadView(UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = AvatarUploadSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    @extend_schema(
+        request=AvatarUploadSerializer,
+        responses={
+            200: AvatarUploadSerializer,
+            400: OpenApiTypes.OBJECT,
+        },
+        # This tells Spectacular it's a file upload
+        operation={
+            "request": {
+                "content": {"multipart/form-data": {"schema": AvatarUploadSerializer}}
+            }
+        },
+    )
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.avatar:
+            user.avatar.delete()
+
+        return super().update(request, *args, **kwargs)
