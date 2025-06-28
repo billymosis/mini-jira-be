@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from rest_framework import serializers
 from .models import CustomUser
 from django.contrib.auth import authenticate
@@ -34,9 +35,18 @@ class LoginResponseSerializer(serializers.Serializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    is_admin = serializers.BooleanField(default=False)
+
     class Meta:
         model = CustomUser
-        fields = ["username", "email", "password", "first_name", "last_name"]
+        fields = [
+            "username",
+            "email",
+            "password",
+            "first_name",
+            "last_name",
+            "is_admin",
+        ]
         extra_kwargs = {
             "password": {"write_only": True, "required": True},
             "email": {"required": True},
@@ -44,7 +54,16 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     # Use built in django create
     def create(self, validated_data):
-        return CustomUser.objects.create_user(**validated_data)
+        is_admin = validated_data.pop("is_admin", False)
+        user = CustomUser.objects.create_user(**validated_data)
+
+        if is_admin:
+            admin_group, _ = Group.objects.get_or_create(name="Admins")
+            user.is_staff = True
+            user.is_superuser = True
+            user.groups.add(admin_group)
+
+        return user
 
 
 class LoginSerializer(serializers.Serializer):

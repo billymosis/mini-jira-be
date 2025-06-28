@@ -75,9 +75,12 @@ class ProjectList(ListAPIView, CreateAPIView):
 
     def get_queryset(self):
         request = self.request
-        queryset = Project.objects.filter(
-            Q(owner=request.user) | Q(members=request.user)
-        )
+        if request.user.is_admin:
+            queryset = Project.objects.all()
+        else:
+            queryset = Project.objects.filter(
+                Q(owner=request.user) | Q(members=request.user)
+            )
 
         # Filter by name
         project_name = request.query_params.get("name", None)

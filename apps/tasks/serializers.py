@@ -7,6 +7,7 @@ from .models import Task
 
 class TaskSerializer(serializers.ModelSerializer):
     assigned_to = UserShortSerializer(allow_null=True)
+    is_archived = serializers.BooleanField(allow_null=False)
 
     class Meta:
         model = Task
