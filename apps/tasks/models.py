@@ -18,7 +18,11 @@ class Task(models.Model):
         max_length=20, choices=TaskStatus.choices, default=TaskStatus.TODO
     )
     assigned_to = models.ForeignKey(
-        "users.CustomUser", on_delete=models.SET_NULL, null=True, default=None
+        "users.CustomUser",
+        on_delete=models.SET_NULL,
+        null=True,
+        default=None,
+        related_name="assigned_tasks",
     )
     project = models.ForeignKey(
         "projects.Project", on_delete=models.CASCADE, related_name="tasks"
