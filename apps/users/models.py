@@ -1,10 +1,22 @@
+from typing import TYPE_CHECKING
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+if TYPE_CHECKING:
+    from apps.projects.models import Project
+    from django.db.models import Manager
+    from apps.tasks.models import Task
+
+
 # Create your models here.
 class CustomUser(AbstractUser):
+    if TYPE_CHECKING:
+        owned_projects: Manager[Project]
+        member_of_projects: Manager[Project]
+        assigned_tasks: Manager[Task]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
     last_seen = models.DateTimeField(null=True, blank=True, default=None)
